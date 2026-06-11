@@ -149,9 +149,9 @@ function ClosedSummary({
   const { src, dst } = flight;
 
   return (
-    <div className={cn('flex flex-col px-6 pb-6 pt-7', className)}>
-      <div className="flex items-center justify-between gap-4 pl-10">
-        <Airline flight={flight} className="shrink-0" />
+    <div className={cn('flex flex-col px-6 pb-6 pt-7 gap-4', className)}>
+      <div className="flex items-center justify-between gap-4 pl-16">
+        <Airline flight={flight} />
 
         <div className="flex flex-1 items-center justify-end gap-4 sm:gap-6">
           <Endpoint label={src.country} time={formatClock(src.time)} date={formatDate(src.time)} />
@@ -168,26 +168,17 @@ function ClosedSummary({
 }
 
 function Airline({ flight, className }: { flight: Flight; className?: string }) {
-  const { logoSrc, logoStyle, src } = flight;
+  const { logoSrc } = flight;
   return (
-    <div className={cn('flex items-center gap-2', className)}>
-      {logoSrc ? (
-        <img
-          src={logoSrc}
-          alt=""
-          aria-hidden
-          style={{ height: logoStyle.height, margin: logoStyle.margin }}
-          className="w-auto"
-        />
-      ) : null}
-      <span className="text-lg font-bold tracking-tight text-primary">{src.airline}</span>
+    <div className={cn('flex items-center gap-2 w-32', className)}>
+      {logoSrc ? <img src={logoSrc} alt="" aria-hidden /> : null}
     </div>
   );
 }
 
 function Endpoint({ label, time, date }: { label: string; time: string; date: string }) {
   return (
-    <div className="text-center">
+    <div className="text-center max-w-40 w-full">
       <div className="text-sm text-muted-foreground">{label}</div>
       <div className="text-3xl font-bold leading-tight tracking-tight">{time}</div>
       <div className="text-sm text-muted-foreground">{date}</div>
@@ -208,7 +199,7 @@ function OpenSummary({
   const { src, dst } = flight;
 
   return (
-    <div className={cn('grid grid-cols-[1fr_auto_1fr] items-start gap-3 p-8', className)}>
+    <div className={cn('grid grid-cols-[1fr_auto_1fr] items-start gap-3 p-10', className)}>
       <Terminal direction="From" iso3={src.iso3} place={src.country} />
 
       <div className="flex flex-col items-center justify-center h-full">
@@ -247,7 +238,7 @@ function FlightDetails({ flight, className }: { flight: Flight; className?: stri
   const flightTime = `${formatClock(src.time)} - ${formatClock(dst.time)}`;
 
   return (
-    <div className={cn('px-6 py-4', className)}>
+    <div className={cn('p-6', className)}>
       <dl className="grid grid-cols-[2fr_2fr_1fr] gap-4">
         <Stat value={flightTime} label="Flight Time" />
         <Stat value={formatDuration(src.time, dst.time)} label="Duration" />
