@@ -1,27 +1,58 @@
-import { LogOut } from 'lucide-react';
-
 import { Button } from '@/components/ui/button';
-import { useLogout } from '@/features/auth/api/useLogout';
-import { useUsername } from '@/features/auth/api/useUsername';
+import { ErrorState } from '@/components/common/ErrorState';
+import { FlightCard } from '@/features/flights/components/FlightCard';
+import { FlightListSkeleton } from '@/features/flights/components/FlightList.skeleton';
+import { FLIGHTS_PAGE_SIZE, useFlights } from '@/features/flights/api/useFlights';
 
-/**
- * Placeholder for the protected dashboard. The flight list and full user menu
- * land in a later task; for now it confirms auth wiring (username + logout).
- */
 export function DashboardPage() {
-  const { data: username, isLoading } = useUsername();
-  const logout = useLogout();
+  const {
+    data,
+    error,
+    isLoading,
+    isError,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useFlights();
+
+  if (isLoading) {
+    return <FlightListSkeleton />;
+  }
+
+  if (isError) {
+    return <ErrorState error={error} onRetry={() => refetch()} />;
+  }
+
+  const pages = data?.pages ?? [];
+  const total = pages[0]?.total ?? 0;
+  const flights = pages.flatMap((page, pageIndex) =>
+    page.result.map((flight, index) => ({ flight, key: `${pageIndex}-${index}` }))
+  );
+  const viewed = flights.length;
 
   return (
-    <main className="flex min-h-svh flex-col items-center justify-center gap-4 px-4">
-      <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-      <p className="text-muted-foreground">
-        Signed in as {isLoading ? '…' : (username ?? 'unknown')}
-      </p>
-      <Button variant="outline" onClick={() => logout.mutate()} disabled={logout.isPending}>
-        <LogOut className="size-4" />
-        {logout.isPending ? 'Logging out…' : 'Log out'}
-      </Button>
-    </main>
+    <div className="flex flex-col gap-4">
+      <div className="flex items-baseline justify-between">
+        <h2 className="text-lg font-semibold tracking-tight">Available flights</h2>
+        <p className="text-sm text-muted-foreground" aria-live="polite">
+          <span className="font-semibold text-foreground">{viewed}</span> / {total} viewed
+        </p>
+      </div>
+
+      {flights.map(({ flight, key }) => (
+        <FlightCard key={key} flight={flight} />
+      ))}
+
+      {hasNextPage && (
+        <Button
+          className="mt-2 self-center"
+          onClick={() => fetchNextPage()}
+          disabled={isFetchingNextPage}
+        >
+          {isFetchingNextPage ? 'Loading…' : `Load ${FLIGHTS_PAGE_SIZE} more`}
+        </Button>
+      )}
+    </div>
   );
 }
