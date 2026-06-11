@@ -9,21 +9,22 @@ import { Label } from '@/components/ui/label';
 import { loginSchema, type LoginValues } from '@/features/auth/schema';
 
 type LoginFormProps = {
-  onSubmit?: (values: LoginValues) => Promise<void> | void;
+  onSubmit: (values: LoginValues) => void;
+  isPending?: boolean;
 };
 
-export function LoginForm({ onSubmit }: LoginFormProps) {
+export function LoginForm({ onSubmit, isPending = false }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { username: '', password: '' },
   });
 
-  const submit = handleSubmit((values) => onSubmit?.(values));
+  const submit = handleSubmit((values) => onSubmit(values));
 
   return (
     <form className="flex flex-col gap-5" onSubmit={submit} noValidate>
@@ -74,9 +75,9 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
         )}
       </div>
 
-      <Button type="submit" className="mt-1 w-full" disabled={isSubmitting}>
-        {isSubmitting && <Loader2 className="size-4 animate-spin" />}
-        {isSubmitting ? 'Signing in…' : 'Sign in'}
+      <Button type="submit" className="mt-1 w-full" disabled={isPending}>
+        {isPending && <Loader2 className="size-4 animate-spin" />}
+        {isPending ? 'Signing in…' : 'Sign in'}
       </Button>
     </form>
   );
