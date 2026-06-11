@@ -11,9 +11,12 @@ export function LoginPage() {
 
   return (
     <main className="flex min-h-svh items-center justify-center overflow-hidden bg-muted px-4 py-10">
-      <Card className="relative z-10 w-full max-w-sm duration-500 animate-in fade-in zoom-in-95">
+      <Card className="relative z-10 w-full max-w-sm animate-in duration-500 zoom-in-95 fade-in">
         <CardHeader className="justify-items-center text-center">
-          <div className="mb-2 flex size-12 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
+          <div
+            className="mb-2 flex size-12 items-center justify-center rounded-xl bg-primary
+              text-primary-foreground shadow-sm"
+          >
             <Plane className="size-6" />
           </div>
           <CardTitle className="text-2xl tracking-tight">Welcome back</CardTitle>

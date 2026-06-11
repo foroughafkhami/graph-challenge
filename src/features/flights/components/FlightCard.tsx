@@ -34,7 +34,8 @@ export function FlightCard({ flight }: FlightCardProps) {
         <div
           aria-hidden
           className={cn(
-            'pointer-events-none absolute inset-0 origin-bottom transition-transform duration-600 ease-out transform-3d [-webkit-transform-style:preserve-3d]',
+            `pointer-events-none absolute inset-0 origin-bottom transition-transform duration-600
+            ease-out [-webkit-transform-style:preserve-3d] transform-3d`,
             open ? 'transform-[rotateX(-180deg)]' : 'transform-[rotateX(0deg)]'
           )}
         >
@@ -42,7 +43,10 @@ export function FlightCard({ flight }: FlightCardProps) {
             <ClassRibbon label={classLabel} />
             <ClosedSummary flight={flight} price={price} />
           </CardSurface>
-          <CardSurface className="absolute border-t border-dashed inset-0 transform-[rotateX(180deg)] [-webkit-backface-visibility:hidden]">
+          <CardSurface
+            className="absolute inset-0 transform-[rotateX(180deg)] border-t border-dashed
+              [-webkit-backface-visibility:hidden]"
+          >
             <FlightDetails flight={flight} />
           </CardSurface>
         </div>
@@ -72,7 +76,8 @@ export function FlightCard({ flight }: FlightCardProps) {
         aria-expanded={open}
         aria-controls={detailsId}
         aria-label={`${open ? 'Hide' : 'Show'} details for ${src.airline} flight from ${src.country} to ${dst.country}`}
-        className="absolute inset-0 z-10 cursor-pointer rounded-2xl outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        className="absolute inset-0 z-10 cursor-pointer rounded-2xl outline-none
+          focus-visible:ring-3 focus-visible:ring-ring/50"
       />
     </div>
   );
@@ -82,7 +87,8 @@ function CardSurface({ className, ...props }: ComponentProps<'div'>) {
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-2xl bg-card text-card-foreground shadow-sm ring-foreground/10',
+        `relative overflow-hidden rounded-2xl bg-card text-card-foreground shadow-sm
+        ring-foreground/10`,
         className
       )}
       {...props}
@@ -92,8 +98,11 @@ function CardSurface({ className, ...props }: ComponentProps<'div'>) {
 
 function ClassRibbon({ label }: { label: string }) {
   return (
-    <div className="pointer-events-none absolute left-0 top-0 size-24 overflow-hidden">
-      <span className="absolute -left-8 top-6 w-32 -rotate-45 bg-destructive py-1 text-center text-xs font-semibold uppercase tracking-wider text-white shadow-sm">
+    <div className="pointer-events-none absolute top-0 left-0 size-24 overflow-hidden">
+      <span
+        className="absolute top-6 -left-8 w-32 -rotate-45 bg-destructive py-1 text-center text-xs
+          font-semibold tracking-wider text-white uppercase shadow-sm"
+      >
         {label}
       </span>
     </div>
@@ -122,7 +131,8 @@ function DotTrail() {
       {[0, 1, 2].map((index) => (
         <span
           key={index}
-          className="absolute left-0 top-0 size-1.5 rounded-full bg-muted-foreground/60 [animation:dot-trail_1s_linear_infinite] motion-reduce:animate-none"
+          className="absolute top-0 left-0 size-1.5 [animation:dot-trail_1s_linear_infinite]
+            rounded-full bg-muted-foreground/60 motion-reduce:animate-none"
           style={{ animationDelay: `${index * 0.5}s` }}
         />
       ))}
@@ -156,7 +166,7 @@ function ClosedSummary({
   const { src, dst } = flight;
 
   return (
-    <div className={cn('flex flex-col px-6 pb-6 pt-7 gap-4', className)}>
+    <div className={cn('flex flex-col gap-4 px-6 pt-7 pb-6', className)}>
       <div className="flex items-center justify-between gap-4 pl-16">
         <Airline flight={flight} />
 
@@ -177,7 +187,7 @@ function ClosedSummary({
 function Airline({ flight, className }: { flight: Flight; className?: string }) {
   const { logoSrc } = flight;
   return (
-    <div className={cn('flex items-center gap-2 w-32', className)}>
+    <div className={cn('flex w-32 items-center gap-2', className)}>
       {logoSrc ? <img src={logoSrc} alt="" aria-hidden /> : null}
     </div>
   );
@@ -185,9 +195,9 @@ function Airline({ flight, className }: { flight: Flight; className?: string }) 
 
 function Endpoint({ label, time, date }: { label: string; time: string; date: string }) {
   return (
-    <div className="text-center max-w-40 w-full">
+    <div className="w-full max-w-40 text-center">
       <div className="text-sm text-muted-foreground">{label}</div>
-      <div className="text-3xl font-bold leading-tight tracking-tight">{time}</div>
+      <div className="text-3xl leading-tight font-bold tracking-tight">{time}</div>
       <div className="text-sm text-muted-foreground">{date}</div>
     </div>
   );
@@ -209,7 +219,7 @@ function OpenSummary({
     <div className={cn('grid grid-cols-[1fr_auto_1fr] items-start gap-3 p-10', className)}>
       <Terminal direction="From" iso3={src.iso3} place={src.country} />
 
-      <div className="flex flex-col items-center justify-center h-full">
+      <div className="flex h-full flex-col items-center justify-center">
         <Plane withDots className="shrink-0" />
         <div className="absolute bottom-1">
           <PriceTag price={price} variant="solid" />
@@ -233,7 +243,7 @@ function Terminal({
   return (
     <div className={'text-center'}>
       <div className="text-sm font-semibold text-primary">{direction}</div>
-      <div className="text-4xl font-bold leading-tight tracking-tight">{iso3}</div>
+      <div className="text-4xl leading-tight font-bold tracking-tight">{iso3}</div>
       <div className="text-sm leading-snug text-muted-foreground">{place}</div>
     </div>
   );
@@ -261,7 +271,7 @@ function FlightDetails({ flight, className }: { flight: Flight; className?: stri
 function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div>
-      <dt className="text-2xl font-bold leading-tight tracking-tight">{value}</dt>
+      <dt className="text-2xl leading-tight font-bold tracking-tight">{value}</dt>
       <dd className="text-sm text-muted-foreground">{label}</dd>
     </div>
   );

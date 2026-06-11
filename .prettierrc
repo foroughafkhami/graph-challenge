@@ -10,5 +10,14 @@
   "bracketSpacing": true,
   "bracketSameLine": false,
   "arrowParens": "always",
-  "endOfLine": "lf"
+  "endOfLine": "lf",
+  "tailwindStylesheet": "./src/index.css",
+  "tailwindFunctions": ["cn", "cva"],
+  "customFunctions": ["cn", "cva"],
+  "endingPosition": "absolute",
+  "plugins": [
+    "prettier-plugin-tailwindcss",
+    "prettier-plugin-classnames",
+    "prettier-plugin-merge"
+  ]
 }
