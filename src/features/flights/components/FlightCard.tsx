@@ -19,7 +19,7 @@ export function FlightCard({ flight }: FlightCardProps) {
   const price = `$${flight.price}`;
 
   return (
-    <div>
+    <div className="relative">
       <div className="relative perspective-[2200px]">
         {/* Card A — stays in place at the top; revealed once Card B folds away. */}
         <CardSurface id={detailsId}>
@@ -29,26 +29,23 @@ export function FlightCard({ flight }: FlightCardProps) {
 
         {/* Card B — overlays Card A exactly. Hinged at its bottom edge, it folds
             down on open: front (ClosedSummary) rotates out of view as the back
-            (FlightDetails) settles below Card A. */}
-        <button
-          type="button"
-          onClick={() => setOpen((value) => !value)}
-          aria-expanded={open}
-          aria-controls={detailsId}
-          aria-label={`${open ? 'Hide' : 'Show'} details for ${src.airline} flight from ${src.country} to ${dst.country}`}
+            (FlightDetails) settles below Card A. Purely visual — the overlay
+            button below is the click target, so the whole card toggles. */}
+        <div
+          aria-hidden
           className={cn(
-            'absolute inset-0 origin-bottom cursor-pointer rounded-2xl outline-none transition-transform duration-600 ease-out transform-3d [-webkit-transform-style:preserve-3d] focus-visible:ring-3 focus-visible:ring-ring/50',
+            'pointer-events-none absolute inset-0 origin-bottom transition-transform duration-600 ease-out transform-3d [-webkit-transform-style:preserve-3d]',
             open ? 'transform-[rotateX(-180deg)]' : 'transform-[rotateX(0deg)]'
           )}
         >
-          <CardSurface className="absolute inset-0 text-left [-webkit-backface-visibility:hidden]">
+          <CardSurface className="absolute inset-0 [-webkit-backface-visibility:hidden]">
             <ClassRibbon label={classLabel} />
             <ClosedSummary flight={flight} price={price} />
           </CardSurface>
-          <CardSurface className="absolute border-t border-dashed inset-0 text-left transform-[rotateX(180deg)] [-webkit-backface-visibility:hidden]">
+          <CardSurface className="absolute border-t border-dashed inset-0 transform-[rotateX(180deg)] [-webkit-backface-visibility:hidden]">
             <FlightDetails flight={flight} />
           </CardSurface>
-        </button>
+        </div>
       </div>
 
       {/* Spacer — collapsed while closed, it opens to exactly one card's height
@@ -67,6 +64,16 @@ export function FlightCard({ flight }: FlightCardProps) {
           </CardSurface>
         </div>
       </div>
+
+      {/* Full-area click target for accessibility :) - DISABLE IT WHEN USING DEV CONSOLE OTHERWISE YOU CAN'T SELECT ANYTHING ON THE CARD */}
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+        aria-controls={detailsId}
+        aria-label={`${open ? 'Hide' : 'Show'} details for ${src.airline} flight from ${src.country} to ${dst.country}`}
+        className="absolute inset-0 z-10 cursor-pointer rounded-2xl outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+      />
     </div>
   );
 }
