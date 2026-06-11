@@ -12,3 +12,15 @@ export const loginSchema = z.object({
 });
 
 export type LoginValues = z.infer<typeof loginSchema>;
+
+
+export const loginResponseSchema = z.object({
+  token: z.string().optional(),
+  result: z.string(),
+});
+
+
+export const usernameResponseSchema = z.object({
+  username: z.string(),
+  result: z.string(),
+});
