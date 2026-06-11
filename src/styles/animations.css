@@ -1,0 +1,15 @@
+/* Flight-path dots drifting from the right edge of their track to the left. */
+@keyframes dot-trail {
+  0% {
+    transform: translateX(2rem);
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+}
