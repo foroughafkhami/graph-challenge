@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { ProtectedRoute, RedirectIfAuthenticated } from '@/app/guards';
+import { AppLayout } from '@/components/common/AppLayout';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { LoginPage } from '@/pages/LoginPage';
 
@@ -10,10 +11,15 @@ export const router = createBrowserRouter([
     element: <RedirectIfAuthenticated />,
     children: [{ path: '/login', element: <LoginPage /> }],
   },
-  // Protected: redirected to /login when unauthenticated.
+  // Protected: auth guard → shared layout → page.
   {
     element: <ProtectedRoute />,
-    children: [{ path: '/', element: <DashboardPage /> }],
+    children: [
+      {
+        element: <AppLayout />,
+        children: [{ path: '/', element: <DashboardPage /> }],
+      },
+    ],
   },
   { path: '*', element: <Navigate to="/" replace /> },
 ]);
