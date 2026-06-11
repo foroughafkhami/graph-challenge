@@ -1,6 +1,5 @@
 import Cookies from 'js-cookie';
 
-
 export const AUTH_TOKEN_COOKIE = 'graph_token';
 
 /**
@@ -22,7 +21,6 @@ export function getToken(): string | null {
 export function clearToken(): void {
   Cookies.remove(AUTH_TOKEN_COOKIE, { path: COOKIE_ATTRS.path });
 }
-
 
 export const cookieStorage = {
   getItem: (key: string, initialValue: string | null): string | null =>

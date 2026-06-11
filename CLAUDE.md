@@ -13,7 +13,7 @@ not on backend work. The backend is fixed; do not treat its quirks as bugs to fi
 
 1. **shadcn/ui for all UI elements.** Every interactive UI component must be built with shadcn/ui
    (`src/components/ui/`). Do NOT use black-box component libraries, admin templates, or "panel"
-   starters (no MUI, Ant, Chakra, Bootstrap). shadcn components are *vendored into this repo* — you
+   starters (no MUI, Ant, Chakra, Bootstrap). shadcn components are _vendored into this repo_ — you
    own and customize the code. Treat shadcn output as a starting point: restyle it to match the
    design, don't ship it stock. Headless/animation utilities are fine if disclosed.
 2. **No `alert()`.** Auth/API errors must surface through a custom modal/popup component.
@@ -44,6 +44,7 @@ A change isn't done until `pnpm build`, `pnpm lint`, and `pnpm format:check` are
 - **Dashboard** — flight list + user menu.
 
 **Auth**
+
 - Persist the token across reloads (e.g. storage) and attach it as `Authorization: Bearer {TOKEN}` to
   every request except `/login`.
 - **Logout** calls `/logout`, clears the token/session, and returns to the login page.
@@ -52,12 +53,14 @@ A change isn't done until `pnpm build`, `pnpm lint`, and `pnpm format:check` are
 **User menu** — a popover showing the username from `/username` and a Logout button.
 
 **Flight list**
+
 - Paginated via `/list?page=&size=`. Show **3 cards initially**; a **"Load More"** button fetches
   **3 more per click**.
 - Hide "Load More" once `viewed >= total` (list exhausted).
 - Show a **viewed / total** counter at the top of the list.
 
 **Ticket card — two states**, with smooth open/close transitions:
+
 - **Closed:** airline, time, destination, price.
 - **Open:** flight time, duration, boarding time, gate, seat, transfer info.
 
@@ -71,14 +74,15 @@ Runs on **port 3001**. All endpoints return JSON with a `result` field.
 
 Credentials: **admin / 123456**.
 
-| Method | Path        | Auth | Notes |
-|--------|-------------|------|-------|
+| Method | Path        | Auth | Notes                                                                                                                                            |
+| ------ | ----------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | POST   | `/login`    | no   | Body is **`application/x-www-form-urlencoded`** (`username`, `password`). Returns `{ token, result: "success" }`, or `{ result: "wrong_pass" }`. |
-| POST   | `/logout`   | yes  | Invalidates token. 401 `{result:"unauthorized"}` if bad. |
-| GET    | `/username` | yes  | `{ username:"admin", result:"success" }`. |
-| GET    | `/list`     | yes  | Query `page` (**1-indexed**) & `size`. Returns `{ total, result: [flight...] }`. |
+| POST   | `/logout`   | yes  | Invalidates token. 401 `{result:"unauthorized"}` if bad.                                                                                         |
+| GET    | `/username` | yes  | `{ username:"admin", result:"success" }`.                                                                                                        |
+| GET    | `/list`     | yes  | Query `page` (**1-indexed**) & `size`. Returns `{ total, result: [flight...] }`.                                                                 |
 
 **Backend quirks you must design around (do not "fix" the backend):**
+
 - **No CORS headers.** A browser app on the Vite dev origin will be blocked. Add a **Vite dev proxy**
   in `vite.config.ts` (e.g. proxy `/api` → `http://localhost:3001`) and call same-origin paths.
 - **Single global token.** Only one session exists server-side; a new login or any logout invalidates
@@ -94,9 +98,9 @@ type Place = { country: string; iso3: string; time: string /* ISO */; airline: s
 type Flight = {
   logoSrc: string;
   logoStyle: { height: string; margin: string };
-  src: Place;          // origin
-  dst: Place;          // destination
-  boarding: string;    // seconds, as a string
+  src: Place; // origin
+  dst: Place; // destination
+  boarding: string; // seconds, as a string
   transfer: boolean;
   gates: number;
   seat: string;
@@ -234,5 +238,5 @@ src/
 
 - `PascalCase` components/types, `camelCase` vars/functions, `useX` hooks, `SCREAMING_SNAKE` consts.
 - Files: components `PascalCase.tsx`; hooks/utils `camelCase.ts`. One main export per component file.
-- No dead code, commented-out blocks, or `console.log` in committed work. Comment the *why*, not the *what*.
+- No dead code, commented-out blocks, or `console.log` in committed work. Comment the _why_, not the _what_.
 - Every added dependency is intentional and disclosed in `README.md`.

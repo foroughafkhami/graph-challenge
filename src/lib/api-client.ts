@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 import { clearToken, getToken } from '@/features/auth/token';
