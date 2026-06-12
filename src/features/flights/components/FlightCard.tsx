@@ -27,38 +27,37 @@ export function FlightCard({ flight }: FlightCardProps) {
           <OpenSummary flight={flight} price={price} />
         </CardSurface>
 
-        {/* Card B — overlays Card A exactly. Hinged at its bottom edge, it folds
-            down on open: front (ClosedSummary) rotates out of view as the back
-            (FlightDetails) settles below Card A. Purely visual — the overlay
-            button below is the click target, so the whole card toggles. */}
+        {/* Card B — overlays Card A and folds down from its bottom edge on open:
+            its front face (ClosedSummary) rotates out as the back face
+            (FlightDetails) settles below Card A. Purely visual; the button below
+            is the click target. */}
         <div
           aria-hidden
           className={cn(
             `pointer-events-none absolute inset-0 origin-bottom transition-transform duration-600
-            ease-out [-webkit-transform-style:preserve-3d] transform-3d`,
-            open ? 'transform-[rotateX(-180deg)]' : 'transform-[rotateX(0deg)]'
+            ease-out transform-3d motion-reduce:transition-none`,
+            open ? '-rotate-x-180' : 'rotate-x-0'
           )}
         >
-          <CardSurface className="absolute inset-0 [-webkit-backface-visibility:hidden]">
+          <CardSurface className="absolute inset-0 pb-8 backface-hidden">
             <ClassRibbon label={classLabel} />
             <ClosedSummary flight={flight} price={price} />
           </CardSurface>
           <CardSurface
-            className="absolute inset-0 transform-[rotateX(180deg)] border-t border-dashed
-              [-webkit-backface-visibility:hidden]"
+            className="absolute inset-0 rotate-x-180 border-t border-dashed backface-hidden"
           >
             <FlightDetails flight={flight} />
           </CardSurface>
         </div>
       </div>
 
-      {/* Spacer — collapsed while closed, it opens to exactly one card's height
-          (an invisible clone guarantees the match) so the page reflows to make
-          room for Card B once it has folded down. */}
+      {/* Reflow space for the folded-down panel — collapses to 0 while closed and
+          opens to exactly one card's height (an invisible clone guarantees the
+          match) so the page makes room below Card A. */}
       <div
         aria-hidden
         className={cn(
-          'grid transition-[grid-template-rows] duration-600 ease-out',
+          'grid transition-[grid-template-rows] duration-600 ease-out motion-reduce:transition-none',
           open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
         )}
       >
@@ -69,7 +68,7 @@ export function FlightCard({ flight }: FlightCardProps) {
         </div>
       </div>
 
-      {/* Full-area click target for accessibility :) - DISABLE IT WHEN USING DEV CONSOLE OTHERWISE YOU CAN'T SELECT ANYTHING ON THE CARD */}
+      {/* Full area occupied with a button, this causes so many problems but for ACCESSIBILITY AND TAB CONTROL, we do this. */}
       <button
         type="button"
         onClick={() => setOpen((value) => !value)}
@@ -100,8 +99,8 @@ function ClassRibbon({ label }: { label: string }) {
   return (
     <div className="pointer-events-none absolute top-0 left-0 size-24 overflow-hidden">
       <span
-        className="absolute top-6 -left-8 w-32 -rotate-45 bg-destructive py-1 text-center text-xs
-          font-semibold tracking-wider text-white uppercase shadow-sm"
+        className="absolute top-6 -left-8 w-32 -rotate-45 bg-destructive py-1 text-center
+          text-[0.625rem] font-semibold tracking-wider text-white uppercase shadow-sm sm:text-xs"
       >
         {label}
       </span>
@@ -117,7 +116,7 @@ function Plane({ withDots = false, className }: { withDots?: boolean; className?
         src={PLANE_SRC}
         alt=""
         aria-hidden
-        className="h-10 w-auto select-none"
+        className="h-8 w-auto select-none sm:h-10"
         draggable={false}
       />
       {withDots && <DotTrail />}
@@ -131,8 +130,8 @@ function DotTrail() {
       {[0, 1, 2].map((index) => (
         <span
           key={index}
-          className="absolute top-0 left-0 size-1.5 [animation:dot-trail_1s_linear_infinite]
-            rounded-full bg-muted-foreground/60 motion-reduce:animate-none"
+          className="absolute top-0 left-0 size-1.5 animate-dot-trail rounded-full
+            bg-muted-foreground/60 motion-reduce:animate-none"
           style={{ animationDelay: `${index * 0.5}s` }}
         />
       ))}
@@ -144,7 +143,8 @@ function PriceTag({ price, variant }: { price: string; variant: 'dashed' | 'soli
   return (
     <span
       className={cn(
-        'inline-block rounded-lg px-6 py-1.5 text-lg font-bold text-foreground',
+        `inline-block rounded-lg px-4 text-base font-bold text-foreground sm:px-6 sm:py-1.5
+        sm:text-lg`,
         variant === 'dashed' ? 'border-2 border-dashed border-muted-foreground/40' : 'bg-muted/80'
       )}
     >
@@ -166,9 +166,9 @@ function ClosedSummary({
   const { src, dst } = flight;
 
   return (
-    <div className={cn('flex flex-col gap-4 px-6 pt-7 pb-6', className)}>
-      <div className="flex items-center justify-between gap-4 pl-16">
-        <Airline flight={flight} />
+    <div className={cn('pb flex flex-col gap-4 px-4 pt-6', className)}>
+      <div className="flex items-center justify-between gap-3 pl-10 sm:gap-4 sm:pl-16">
+        <Airline className="absolute bottom-2 left-2 sm:static" flight={flight} />
 
         <div className="flex flex-1 items-center justify-end gap-4 sm:gap-6">
           <Endpoint label={src.country} time={formatClock(src.time)} date={formatDate(src.time)} />
@@ -187,7 +187,7 @@ function ClosedSummary({
 function Airline({ flight, className }: { flight: Flight; className?: string }) {
   const { logoSrc } = flight;
   return (
-    <div className={cn('flex w-32 items-center gap-2', className)}>
+    <div className={cn('flex w-20 items-center gap-2 sm:w-32', className)}>
       {logoSrc ? <img src={logoSrc} alt="" aria-hidden /> : null}
     </div>
   );
@@ -196,9 +196,11 @@ function Airline({ flight, className }: { flight: Flight; className?: string }) 
 function Endpoint({ label, time, date }: { label: string; time: string; date: string }) {
   return (
     <div className="w-full max-w-40 text-center">
-      <div className="text-sm text-muted-foreground">{label}</div>
-      <div className="text-3xl leading-tight font-bold tracking-tight">{time}</div>
-      <div className="text-sm text-muted-foreground">{date}</div>
+      <div className="text-xs text-ellipsis whitespace-nowrap text-muted-foreground sm:text-sm">
+        {label}
+      </div>
+      <div className="text-2xl leading-tight font-bold tracking-tight sm:text-3xl">{time}</div>
+      <div className="text-xs text-muted-foreground sm:text-sm">{date}</div>
     </div>
   );
 }
@@ -216,7 +218,7 @@ function OpenSummary({
   const { src, dst } = flight;
 
   return (
-    <div className={cn('grid grid-cols-[1fr_auto_1fr] items-start gap-3 p-10', className)}>
+    <div className={cn('grid grid-cols-[1fr_auto_1fr] items-start gap-3 p-8 sm:p-10', className)}>
       <Terminal direction="From" iso3={src.iso3} place={src.country} />
 
       <div className="flex h-full flex-col items-center justify-center">
@@ -242,9 +244,9 @@ function Terminal({
 }) {
   return (
     <div className={'text-center'}>
-      <div className="text-sm font-semibold text-primary">{direction}</div>
-      <div className="text-4xl leading-tight font-bold tracking-tight">{iso3}</div>
-      <div className="text-sm leading-snug text-muted-foreground">{place}</div>
+      <div className="text-xs font-semibold text-primary sm:text-sm">{direction}</div>
+      <div className="text-3xl leading-tight font-bold tracking-tight sm:text-4xl">{iso3}</div>
+      <div className="text-xs leading-snug text-muted-foreground sm:text-sm">{place}</div>
     </div>
   );
 }
@@ -255,8 +257,8 @@ function FlightDetails({ flight, className }: { flight: Flight; className?: stri
   const flightTime = `${formatClock(src.time)} - ${formatClock(dst.time)}`;
 
   return (
-    <div className={cn('p-6', className)}>
-      <dl className="grid grid-cols-[2fr_2fr_1fr] gap-4">
+    <div className={cn('p-4 sm:p-6', className)}>
+      <dl className="grid grid-cols-[2fr_2fr_1fr] gap-3 sm:gap-4">
         <Stat value={flightTime} label="Flight Time" />
         <Stat value={formatDuration(src.time, dst.time)} label="Duration" />
         <Stat value={formatBoarding(src.time, flight.boarding)} label="Boarding" />
@@ -271,8 +273,8 @@ function FlightDetails({ flight, className }: { flight: Flight; className?: stri
 function Stat({ value, label }: { value: string; label: string }) {
   return (
     <div>
-      <dt className="text-2xl leading-tight font-bold tracking-tight">{value}</dt>
-      <dd className="text-sm text-muted-foreground">{label}</dd>
+      <dt className="text-lg leading-tight font-bold tracking-tight sm:text-2xl">{value}</dt>
+      <dd className="text-xs text-muted-foreground sm:text-sm">{label}</dd>
     </div>
   );
 }

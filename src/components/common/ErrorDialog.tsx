@@ -19,7 +19,7 @@ type ErrorDialogProps = {
   actionLabel?: string;
 };
 
-/** Reusable error modal — the app's replacement for `alert()`. */
+/** Reusable error modal. */
 export function ErrorDialog({
   open,
   onClose,
